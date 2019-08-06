@@ -198,7 +198,18 @@ print(df)
 
 # 切片操作注意[]的不同，而且下面两种返回结果不一样！！！
 # print(df.loc[dates[0:2], 'a':'c'])
+'''
+            a  b  c
+2018-12-31  1  2  3
+2019-01-01  5  6  7
+'''
 # print(df.loc[dates[0]:dates[2], 'a':'c'])
+'''
+            a   b   c
+2018-12-31  1   2   3
+2019-01-01  5   6   7
+2019-01-02  9  10  11
+'''
 
 # print(df.loc[[True,False,True]])
 # print(df.loc[[0,1,0]]) # error
@@ -296,8 +307,8 @@ Name: shield, dtype: int64
 # print(df.iloc[[0]])
 
 # print(df.iloc[0,2])
-# print(df.iloc[(0,2)]) # 与上例同
-# print(df.iloc[[0,2]]) # 与上述两例子差距甚多
+# print(df.iloc[(0,2)]) # 与上例同,返回索引行索引为0，列索引为2的单值
+# print(df.iloc[[0,2]]) # 与上述两例子差距甚多，返回行索引分别为0，2所有列的dataframe
 
 # print(df.iloc[[True, False, True]])
 
@@ -325,17 +336,42 @@ Name: shield, dtype: int64
 ##########################################################################################
 # .ix用法：已经废弃，不需要掌握
 
+
+# copy(deep=True) default copy
+# Deep copy has own copy of data and index.
+# when deep=False:Shallow copy shares data and index with original
+
+
 '''
+# another example
+s = pd.Series([1, 2], index=["a", "b"])
+shallow = s.copy(deep=False)
+deep = s.copy()
+# 全部返回False
+print(s is shallow)
+print(s is deep)
+
+print(s.values is shallow.values and s.index is shallow.index) # return True
+print(s.values is deep.values or s.index is deep.index) # return False
+
 df2 = df.copy()
 df2['E'] = ['one','one','two','three','four','three']
 # print(df2)
+
+# isin: Whether each element in the DataFrame is contained in values.
+# df.isin(self, values) values : iterable, Series, DataFrame or dict
+# When values is a list check whether every value in the DataFrame is present in the list
+# When values is a dict, we can pass values to check for each column separately:
+# When values is a Series or DataFrame the index and column must match
+
 print(df2[df2['E'].isin(['two','four'])]) # isin的用法
 '''
 
 '''
 s1 = pd.Series([25,26,27,28,29,30],index = pd.date_range('20181231', periods = 6))
 # print(s1)
-df['F'] = s1
+# 为df添加F列
+df['F'] = s1 # s1的行索引要和df行索引一致
 print(df)
 '''
 
@@ -360,12 +396,14 @@ print(pd.isnull(df1)) # 对数据进行布尔填充
 '''
 
 '''
+# 计算均值
 print(df.mean())
 print(df.mean(1))
 '''
 
 '''
-s = pd.Series([1,3,5,np.nan,6,8], index = dates).shift(2) # shift的含义？
+# shift(self, periods=1, freq=None, axis=0, fill_value=None) 对数据移动，如幅度、时间序列位移、方向、移位后的填充值
+s = pd.Series([1,3,5,np.nan,6,8], index = dates).shift(2) # shift(num)
 # s = pd.Series([1,3,5,np.nan,6,8], index = dates)
 # print(s)
 df1 = df.sub(s, axis = 'index')
@@ -379,36 +417,50 @@ df1 = apply(lambda x: x.max() - x.min())
 '''
 
 '''
-# 直方图，这个名字好
+# 直方图
 s = pd.Series(np.random.randint(0,7,size = 10))
 print(s)
-print('#'*100)
+# Series.value_counts(self, normalize=False, sort=True, ascending=False, bins=None, dropna=True)
+# normalize 百分比形式
+# sort 是否排序
+# ascending 升序or降序
+# dropna 过滤NaN值
+# bins Bins can be useful for going from a continuous variable to a categorical variable
 print(s.value_counts()) # 返回值数量的降序排列
 '''
 
 '''
 # 对字符串的操作
 s = pd.Series(['A','ABAB','NBA','Cba',np.nan,'cat'])
+# 相当于用series.str将series转换为普通字符串，upper、lower等方法全都适用
 print(s.str.lower())
 '''
 
 '''
 # 合并 concat
 df = pd.DataFrame(np.random.randn(10,4))
-pieces = [df[:3],df[3:7],df[7:]]
+pieces = [df[:3],df[3:7],df[7:]] # 按行切割
 print(pieces)
 print('!'*100)
 print(pd.concat(pieces))
 '''
 
 
-# 合并 join 类似于SQL的合并,举一反三，找到应用场景
+# 合并 merge
 '''
 left = pd.DataFrame({'key':['foo','foo'], 'lval':[1,2]})
 right = pd.DataFrame({'key':['foo','foo'], 'rval':[4,5]})
 # print(left)
 df1 = pd.merge(left, right, on = 'key')
 print(df1)
+'''
+
+'''
+   key  lval  rval
+0  foo     1     4
+1  foo     1     5
+2  foo     2     4
+3  foo     2     5
 '''
 
 '''
@@ -420,9 +472,10 @@ print(df1)
 '''
 
 '''
+# append 
 df = pd.DataFrame(np.random.randn(8,4), columns = ['A','B','C','D'])
 s = df.iloc[3]
-df1 = df.append(s, ignore_index = True) # 将索引为3的行追加到元数据的末尾
+df1 = df.append(s, ignore_index = True) # 将索引为3的行追加到原数据的末尾
 print(df1)
 '''
 
@@ -464,7 +517,7 @@ print(df1)
 
 
 '''
-# 时间序列
+# 时间序列！！！详看文档
 rng = pd.date_range('1/1/2012', periods = 100, freq = 'S')
 ts = pd.Series(np.random.randint(0,500,len(rng)), index = rng)
 df = ts.resample('5Min').sum()
@@ -473,7 +526,6 @@ df = ts.resample('5Min').sum()
 '''
 
 # categorical 这部分没看
-
 
 
 '''
