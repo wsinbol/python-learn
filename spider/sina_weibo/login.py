@@ -76,10 +76,10 @@ def getComments(s = '', page = 0):
 
 def main():
 	login_url='https://passport.weibo.cn/sso/login'
-	username='181####8751'
-	password='s###a'
+	username='######'
+	password='#####'
 
-	web_url = 'https://m.weibo.cn/profile/info?uid=3847122978' # 网页版用户信息
+	web_url = 'https://s.weibo.com/weibo/%25E9%25A6%2596%25E6%2589%25B9%25E5%259B%25BD%25E5%25AE%25B6%25E5%2585%25A8%25E5%259F%259F%25E6%2597%2585%25E6%25B8%25B8%25E7%25A4%25BA%25E8%258C%2583%25E5%258C%25BA%25E5%2590%258D%25E5%258D%2595?q=%E9%A6%96%E6%89%B9%E5%9B%BD%E5%AE%B6%E5%85%A8%E5%9F%9F%E6%97%85%E6%B8%B8%E7%A4%BA%E8%8C%83%E5%8C%BA%E5%90%8D%E5%8D%95&typeall=1&suball=1&Refer=g&page=3' # 网页版用户信息
 	api_url = ''
 
 	s = login(login_url,username,password)
