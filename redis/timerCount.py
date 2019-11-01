@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
 '''
 基于redis列表结构的定时触发操作demo
-	需要在其他文件中对timer进行添加元素操作
+	需要在其他文件中对timer列表进行添加元素操作
+	当timer列表中元素为空时停止定时器
 '''
 import threading
 import time
